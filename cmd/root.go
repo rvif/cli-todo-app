@@ -52,7 +52,8 @@ func loadTasks() {
 
 // Save to JSON file
 func saveTasks() {
-	data, _ := json.MarshalIndent(tasks, "", "  ")
+	data, _ := json.MarshalIndent(tasks, "", "   ")
+	// log.Println(string(data))
 	os.WriteFile(taskFile, data, 0644)
 }
 

@@ -1,3 +1,6 @@
+/*
+Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+*/
 package cmd
 
 import (
@@ -6,30 +9,35 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete [task_id]",
-	Short: "Delete a task by ID",
-	Args:  cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		taskID := ShortUUID(args[0])
+	Short: "Delete a todo by its ID",
 
-		index := -1
+	Run: func(cmd *cobra.Command, args []string) {
+
+		if len(tasks) == 0 {
+			fmt.Println("No tasks to delete.")
+			return
+		}
+
+		id := args[0]
+		found := false
 		for i, task := range tasks {
-			if task.ID == taskID {
-				index = i
+			if string(task.ID) == id {
+				found = true
+				tasks = append(tasks[:i], tasks[i+1:]...)
+				saveTasks()
 				break
 			}
 		}
 
-		if index == -1 {
-			fmt.Printf("Task with ID %s not found.\n", taskID)
+		if !found {
+			fmt.Printf("Task with ID %s not found\n", id)
 			return
+		} else {
+			fmt.Printf("Task with ID %s deleted\n", id)
 		}
-
-		tasks = append(tasks[:index], tasks[index+1:]...)
-		saveTasks()
-
-		fmt.Printf("Task [%s] deleted successfully!\n", taskID)
 	},
 }
 

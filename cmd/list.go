@@ -10,7 +10,7 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list",
+	Use:   "list todos",
 	Short: "List all tasks",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(tasks) == 0 {
