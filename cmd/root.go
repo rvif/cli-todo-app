@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"database/sql"
 	"encoding/json"
 	"os"
 	"time"
@@ -28,9 +29,13 @@ type Task struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+// Temp json solution for storing tasks
 var tasks []Task
 
 const taskFile = "tasks.json"
+
+// global postgress connection
+var db *sql.DB
 
 // Load tasks from JSON file (or create if missing)
 func loadTasks() {
@@ -59,7 +64,8 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func Execute() {
+func Execute(conn *sql.DB) {
+	db = conn
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
