@@ -7,7 +7,7 @@ import (
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add [task name]",
+	Use:   "add [task_name]",
 	Short: "Add a new task",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
