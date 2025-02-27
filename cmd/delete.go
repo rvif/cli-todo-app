@@ -1,10 +1,9 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -15,29 +14,21 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a todo by its ID",
 
 	Run: func(cmd *cobra.Command, args []string) {
-
-		if len(tasks) == 0 {
-			fmt.Println("No tasks to delete.")
-			return
-		}
-
 		id := args[0]
-		found := false
-		for i, task := range tasks {
-			if string(task.ID) == id {
-				found = true
-				tasks = append(tasks[:i], tasks[i+1:]...)
-				saveTasks()
-				break
-			}
+
+		res, err := db.ExecContext(context.Background(), `DELETE FROM tasks WHERE id = $1`, id)
+		if err != nil {
+			log.Fatalf("Error deleting task: %v", err)
 		}
 
-		if !found {
+		rowsAffected, _ := res.RowsAffected()
+		if rowsAffected == 0 {
 			fmt.Printf("Task with ID %s not found\n", id)
 			return
-		} else {
-			fmt.Printf("Task with ID %s deleted\n", id)
 		}
+
+		fmt.Printf("Task with ID %s deleted\n", id)
+
 	},
 }
 
