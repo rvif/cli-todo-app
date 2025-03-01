@@ -2,33 +2,34 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
+
 	"os"
 
-	"github.com/rvif/cli-todo-app/cmd"
-
+	"github.com/fatih/color"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/rvif/cli-todo-app/cmd"
 )
 
 func main() {
 	godotenv.Load(".env")
 	dbURL := os.Getenv("DB_URL")
 	if dbURL == "" {
-		log.Println("DB_URL is not found in .env")
+		color.Red("🔴 DB_URL is not found in .env")
 	}
 
 	conn, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatal("Error connecting to the database: ", err)
+		color.Red("🔴 Error connecting to the database: %v", err)
+		return
 	}
 	defer conn.Close()
 
 	err = conn.Ping()
 	if err != nil {
-		log.Fatal("Error pinging the database: ", err)
+		color.Red("🔴 Error pinging the database: %v", err)
+		return
 	}
-	fmt.Println("Connected to the database")
+	// color.Green("🟩 Connected to the database")
 	cmd.Execute(conn)
 }

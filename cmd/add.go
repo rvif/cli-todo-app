@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
 	"github.com/rvif/cli-todo-app/internal/database"
@@ -29,10 +27,11 @@ var addCmd = &cobra.Command{
 		})
 
 		if err != nil {
-			log.Fatalf("Error creating task: %v", err)
+			color.Red("🔴 Error creating task: %v", err)
+			return
 		}
 
-		fmt.Printf("Task added: [%s] %s\n", newId, taskName)
+		color.Green("🟦 Task added: [%s] %s", newId, taskName)
 	},
 }
 

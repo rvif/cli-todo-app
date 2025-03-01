@@ -2,9 +2,8 @@ package cmd
 
 import (
 	"context"
-	"fmt"
-	"log"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -18,17 +17,17 @@ var deleteCmd = &cobra.Command{
 
 		res, err := db.ExecContext(context.Background(), `DELETE FROM tasks WHERE id = $1`, id)
 		if err != nil {
-			log.Fatalf("Error deleting task: %v", err)
+			color.Red("🔴 Error deleting task: %v", err)
+			return
 		}
 
 		rowsAffected, _ := res.RowsAffected()
 		if rowsAffected == 0 {
-			fmt.Printf("Task with ID %s not found\n", id)
+			color.Red("🟡 Task with ID %s not found", id)
 			return
 		}
 
-		fmt.Printf("Task with ID %s deleted\n", id)
-
+		color.Green("🟦 Task with ID %s deleted", id)
 	},
 }
 

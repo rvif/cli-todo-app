@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-
+	"github.com/fatih/color"
 	"github.com/rvif/cli-todo-app/internal/database"
 	"github.com/spf13/cobra"
 )
@@ -16,7 +14,7 @@ var updateCmd = &cobra.Command{
 		id := args[0]
 		task, err := database.New(db).GetTaskByID(cmd.Context(), id)
 		if err != nil {
-			fmt.Printf("Task with ID %v not found\n", id)
+			color.Red("🔴 Error fetching task: %v", err)
 			return
 		}
 
@@ -27,12 +25,17 @@ var updateCmd = &cobra.Command{
 			UpdatedAt:   getISTTime(),
 		})
 
-		if err != nil {
-			log.Fatal("Error updating task: ", err)
+		strNewStatus := "Pending"
+		if newStatus {
+			strNewStatus = "Completed"
 		}
 
-		fmt.Printf("Task with ID %s updated to %v\n", id, newStatus)
+		if err != nil {
+			color.Red("🔴 Error updating task: %v", err)
+			return
+		}
 
+		color.Green("🟦 Task with ID %s updated to %v", id, strNewStatus)
 	},
 }
 

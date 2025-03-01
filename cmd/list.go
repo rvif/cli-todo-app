@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
 	"os"
-	"time"
 
+	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 	"github.com/rvif/cli-todo-app/internal/database"
 	"github.com/spf13/cobra"
@@ -17,28 +15,39 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		tasks, err := database.New(db).GetAllTasks(cmd.Context())
 		if err != nil {
-			log.Fatalf("Error fetching tasks: %v", err)
+			// Prints to console in red color
+			color.Red("🔴 Error fetching tasks: %v", err)
+			return
 		}
 		if len(tasks) == 0 {
-			fmt.Println("No tasks found. noice.")
+			color.Yellow("⭐ No tasks found.")
 			return
 		}
 
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"ID", "Task Name", "Status", "Created At", "Updated At"})
+		table.SetHeaderColor(
+			tablewriter.Colors{tablewriter.FgHiMagentaColor, tablewriter.Bold},
+			tablewriter.Colors{tablewriter.FgHiWhiteColor, tablewriter.Bold},
+			tablewriter.Colors{tablewriter.FgHiGreenColor, tablewriter.Bold},
+			tablewriter.Colors{tablewriter.FgHiWhiteColor, tablewriter.Bold},
+			tablewriter.Colors{tablewriter.FgHiWhiteColor, tablewriter.Bold},
+		)
+
+		table.SetBorder(false)
 
 		for _, task := range tasks {
-			status := "remaining"
+			status := color.HiRedString("Pending")
 			if task.IsCompleted {
-				status = "completed"
+				status = color.HiGreenString("Completed")
 			}
 
 			table.Append([]string{
-				task.ID,
+				color.HiMagentaString(task.ID),
 				task.Name,
 				status,
-				task.CreatedAt.Format(time.RFC822),
-				task.UpdatedAt.Format(time.RFC822),
+				task.CreatedAt.Format("02 Jan 06 03:04 PM"),
+				task.UpdatedAt.Format("02 Jan 06 03:04 PM"),
 			})
 		}
 
